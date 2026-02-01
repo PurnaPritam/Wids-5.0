@@ -33,3 +33,13 @@ This week focused on the task of mapping low-resolution (blurred) images to high
 - **Metric:** I used Peak Signal-to-Noise Ratio (PSNR) to measure reconstruction quality in decibels (dB).
 - **Results:** Tested on 5 held-out CIFAR-10 test images, the trained model achieved an **average improvement of 2.65 dB** over the baseline bicubic interpolation (blurred images: ~24.5 dB, deblurred images: ~27.15 dB).
 - *Analysis:* Visual inspection confirmed that the network successfully learned to reduce blur artifacts, producing output images with noticeably sharper edges and clearer textures than the inputs. The consistent 2-3 dB improvement across all test samples validated the model's generalization capability.
+
+## Week 4: Image Deblurring with DeblurGAN
+**Objective:** Implement a Generative Adversarial Network (GAN) architecture for motion blur removal and image restoration.
+
+This week focused on adversarial training for image-to-image translation, specifically deblurring motion-blurred images using the STL-10 dataset (96x96 high-quality images). I implemented a DeblurGAN architecture consisting of a U-Net Generator with skip connections (Conv2d: 3→64→128→256→512 channels in the encoder, mirrored in the decoder) and a Multi-Scale PatchGAN Discriminator operating at two resolutions. The model was trained for 100 epochs on 5,000 STL-10 images with synthetically introduced motion blur (variable kernel sizes 7-15 with random angles 0-180°). The loss function combined L1 reconstruction loss (λ=100), VGG perceptual loss (λ=0.01), and adversarial loss (λ=1.0).
+
+**Outcomes:**
+- **Metric:** I used Peak Signal-to-Noise Ratio (PSNR) to measure reconstruction quality in decibels (dB).
+- **Results:** Tested on 10 held-out STL-10 test images, the trained model achieved an **average PSNR improvement of ~3-4 dB** over the baseline motion-blurred images, with the Generator and Discriminator losses stabilizing after approximately 50 epochs.
+- *Analysis:* Visual inspection confirmed that the network successfully learned to remove motion blur artifacts, producing output images with noticeably sharper edges and restored high-frequency details compared to the blurred inputs. The U-Net skip connections proved essential for preserving fine structural details, while the multi-scale discriminator ensured globally coherent deblurring across different image regions.
